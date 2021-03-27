@@ -1,0 +1,6 @@
+# for visual studio
+.vs
+out/
+
+
+**/build/
