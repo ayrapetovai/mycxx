@@ -5,6 +5,7 @@ using namespace std;
 int main() {
         cout << "basic string" << " " << typeid(R"()").name() << endl;
         cout << R"(raw string "hello", русский текст?)" << " " << typeid(R"()").name() << endl;
+        // vc++20: cannot call function "std::operator<<(std::basic_ostream<char, _Traits> &, const char8_t *) [с _Traits=std::char_traits<char>]", it is deleted
         cout << u8R"(UTF-8 string русский текст?)" << " " << typeid(u8R"()").name() <<  endl;
         cout << uR"(UTF-16 string русский текст?)" << " " << typeid(uR"()").name() <<  endl;
         cout << UR"(UTF-32 string русский текст?)" << " " << typeid(UR"()").name() <<  endl;
