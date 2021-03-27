@@ -2,5 +2,10 @@
 .vs
 out/
 
+# unix
+**/a.out
 
 **/build/
+
+# vim
+**/*.*~

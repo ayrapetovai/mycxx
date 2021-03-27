@@ -95,13 +95,14 @@ int main() {
 
 	print_paragraph_header("chars");
 	cout << "On my machine char is " << (numeric_limits<char>::is_signed? "signed": "unsigned") << ", " << sizeof(char) << " bytes, in [" << numeric_limits<char>::min() << ", " << numeric_limits<char>::max() << "]" << endl;
-	char c = 'Ю';
+#ifdef _WIN32
+	char c = 'Ю';     // compilation error on Mac OS: Character too large for enclosing character literal type [character_too_large]
 	wchar_t wc = 'Ю'; // wchar_t - size is platform dependent, wide enough to hold big charcodes on that platform
 	cout << "8 bit char is '" << c << "', 16 bit char is '" << wc << "'" << endl;
 	cout << "8 bit char is " << (int)c << " as int" << endl;   // -32
 	cout << "16 bit char is " << (int)wc << " as int" << endl; // 65502
 	cout << "type of ('0' + 1) is " << typeid('0' + 1).name() << endl; // int
-
+#endif
 	int ii1 = char(256);  // to make a char of 8 bits, right 8 bits are taken from bit representation of literal (rg conversion to char) as compoile time. Then they are copied to int variable.
 	cout << "value of char(256) put in int is " << ii1 << endl; // 0
 	int ii2 = char(257);
