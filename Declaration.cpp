@@ -1,4 +1,5 @@
 #include<iostream>
+#include<complex>
 #include"Utils.hpp"
 
 using namespace std;
@@ -65,6 +66,16 @@ int main() {
 		cout << "me: what are you, x? x: I am '" << typeid(x).name() << "' *troll_face*" << endl;
 		// and... it is int...
 		// TODO find confusin declaration with can be mentioned as constructor call but it is not
+		WILL_NOT_COMPILE(
+			int y(); // TODO why not?
+		);
+	}
+	{
+		// ATTENTION! In a declaration () - empty pair of parantheses always means "function".
+		complex<double> z1(); // function? yeah :-)
+		cout << "me: what are you, z1? z1: I am '" << typeid(z1).name() << "' *troll_face*" << endl;
+		complex<double> z2{}; // complecx with default values, as complex<double> z2;
+		cout << "me: what are you, z2? z2: I am '" << typeid(z2).name() << endl;
 	}
 	{
 		// TODO what is the name of this feature? extraction?
