@@ -13,7 +13,8 @@ int main() {
 	// TODO name -> left -> right rule of declaration reading
 	// TODO examples of complex declarations
 	// TODO const
-	// parensies roll in reclaration
+	// TODO parensies role in reclaration
+	// TODO describe type nameing acronims, i for int, template class naming etc.
 	{
 		int* name1; // pointer to an int, equivalent to int(*name)
 		int(*name2); // pointer to an int, equivalent to int *name
