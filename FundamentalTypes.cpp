@@ -1,6 +1,7 @@
 ﻿#include<iostream>
 #include<limits>
 #include<bitset>
+#include "Utils.hpp"
 
 using namespace std;
 
@@ -11,6 +12,7 @@ void print_size_of() {
 
 template<typename A, typename B>
 void print_comparison_result(const A& a, const B& b) {
+#pragma warning(suppress: 4805) // TODO vc++17 only?
 	cout << typeid(A).name() << "(" << a << ") " << (a == b? "==": "!=") << " " << typeid(B).name() << "(" << b << ")" << endl;
 }
 
@@ -86,9 +88,15 @@ int main() {
 	cout << "signed char " << (typeid(scx) == typeid(uscx)? "==": "!=") << " unsigned char" << endl;
 	// cannot assign pointers to eachother, but can assign actual values.
 	// no pointer conversion between signed and unsigned
-	// char* pcx = &uscx;            // copilation error: value of type "unsigned char *" cannot be used to initialize entity of type "char *"
-	// signed char* pscx = &uscx;    // copilation error: value of type "unsigned char *" cannot be used to initialize entity of type "signed char *"
-	// unsigned char* puscx = &scx;  // copilation error: value of type "signed char *" cannot be used to initialize entity of type " unsigned char *"
+	WILL_NOT_COMPILE(
+		char* pcx = &uscx;           // value of type "unsigned char *" cannot be used to initialize entity of type "char *"
+	);
+	WILL_NOT_COMPILE(
+		signed char* pscx = &uscx;   // value of type "unsigned char *" cannot be used to initialize entity of type "signed char *"
+	);
+	WILL_NOT_COMPILE(
+		unsigned char* puscx = &scx; // value of type "signed char *" cannot be used to initialize entity of type " unsigned char *"
+	);
 	char vcx = uscx;            // ok
 	signed char vscx = uscx;    // ok, platform dependent, uscx value can be greadet than signde char max
 	unsigned char vuscx = scx;  // ok
@@ -119,8 +127,12 @@ int main() {
 	cout << "archaic_char is " << archaic_char << endl;
 
 	print_paragraph_header("void");
-	// void x; // compilation error
-	// void& r; // compilation error
+	WILL_NOT_COMPILE(
+		void x;
+	);
+	WILL_NOT_COMPILE(
+		void& r;
+	);
 	void f(); // funtion that does not return value
 	void* pv; // pointer to object of unknowen type
 	cout << "size of pointer is " << sizeof(pv) << endl;

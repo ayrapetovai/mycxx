@@ -92,6 +92,7 @@ int main() {
 		cout << "b is " << bits(b) << endl; // b is 0011111111001111000101011111000101011111000101011111000101011111
 		//                                                                                                    ^ from there to right double makes us happy (position depends on numbers and operations)
 		// Compare the module of defference to epsilon is usless, if the expected values are greater than 1
+		// TODO prove that
 		cout << "a == b by epsiolon is " << boolalpha << (fabs(a - b) <= numeric_limits<double>::epsilon()) << noboolalpha << ", |a - b| == " << fabs(a - b) << endl; // true
 	}
 	{

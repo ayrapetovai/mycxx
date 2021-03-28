@@ -17,6 +17,7 @@ add_executable (FloatingPoint FloatingPoint.cpp)
 add_executable (String String.cpp)
 add_executable (Alignment Alignment.cpp)
 add_executable (Declaration Declaration.cpp)
+add_executable (Initialization Initialization.cpp)
 #add_executable (FundamentalTypesTest FundamentalTypesTest.cpp)
 #target_link_libraries(FundamentalTypesTest PRIVATE Catch2::Catch2)
 

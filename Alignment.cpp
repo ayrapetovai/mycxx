@@ -9,6 +9,7 @@ using namespace std;
 #endif
 
 // packing can make packed struct to became not portable across different machines and OS
+// https://stackoverflow.com/a/45129239
 
 int main() {
 	// alignof - minimal bytes per field
