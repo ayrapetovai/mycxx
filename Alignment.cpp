@@ -3,9 +3,9 @@
 using namespace std;
 
 #ifdef _WIN32
-#define PACKED( __struct_declaration_block__ ) __pragma( pack(push, 1) ) __stuact_declaration_block__ __pragma( pack(pop) );
+	#define PACKED( __struct_declaration_block__ ) __pragma( pack(push, 1) ) __struct_declaration_block__ __pragma( pack(pop) );
 #else
-#define PACKED( __struct_declaration_block__ ) __struct_declaration_block__ __attribute__((__packed__));
+	#define PACKED( __struct_declaration_block__ ) __struct_declaration_block__ __attribute__((__packed__));
 #endif
 
 // packing can make packed struct to became not portable across different machines and OS
