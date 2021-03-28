@@ -12,7 +12,7 @@ int main() {
 	{
 		// initializer syntax
 		int x1{ 1 };    // TODO call {} initializer list construtor sematics?
-		int x2 = { 2 }; // create initializer list and pass it to {}-constructor, TODO initializer_list get created and occupy some memory or optimized?
+		int x2 = { 2 }; // use constructor; wich of () and {}, is intializer_list is created? does it occupy memory?
 		int x3 = 3;     // TODO copy/move constructor sematics?
 		int x4(4);      // TODO copy/move constructor sematics?
 		cout << "x[i] in (" << x1 << ", " << x2 << ", " << x3 << ", " << x4 << ")" << endl;
@@ -64,6 +64,7 @@ int main() {
 		}
 		{
 			// global_variable is defined at the begining
+#pragma warning(suppress: 4101) // unused local variable
 			int local_variable;
 			cout << "global_variable int with no intializer " << EQUALS_STRING(global_variable, int{}) << " int{}" << endl;
 			
@@ -71,8 +72,8 @@ int main() {
 				cout << local_variable << endl; // local_variable is used without initialization
 			);
 
-			int* free_store_variable = new int; // free_store_variable is not initialized, TODO if class's constructor is to be called, wich it is? Default constructor, I guess.
-			cout << "free_store_variable int with no intializer " << EQUALS_STRING(*free_store_variable, int{}) << " int{}" << ", it is " << *free_store_variable << endl; // -842150451
+			int* free_store_variable = new int; // free_store_variable is not initialized, TODO if class's constructor is to be called, wich it is? Default constructor, I guess, but why value is random with vc++17?
+			cout << "free_store_variable int with no intializer " << EQUALS_STRING(*free_store_variable, int{}) << " int{}" << ", it is " << *free_store_variable << endl; // -842150451 with vc++17, 0 with mac os g++17. TODO why?
 			delete free_store_variable;
 		}
 	}

@@ -1,4 +1,5 @@
 #include<iostream>
+#include"Utils.hpp"
 
 using namespace std;
 
@@ -25,8 +26,13 @@ namespace N {
 			::x = 3; // accessing global scope x by namespace qualifier :: with no name - global
 		}
 		A::x; // x of class A
-	} // functions and namespaces need no trailing ;
-} // functions and namespaces need no trailing ;
+
+		WILL_NOT_COMPILE(
+			void bar() {} // cannot declare non-global, non-class, non-struct fanction, use labdas
+		);
+
+	} // global functions and namespaces need no trailing ;
+} // global functions and namespaces need no trailing ;
 
 int y = N::A::x;
 
@@ -53,5 +59,20 @@ int main() {
 		int a[1], * b; // a is array, b is pointer
 		cout << "a is " << typeid(a).name() << ", b is " << typeid(b).name() << endl;
 	}
+	{
+		// if some construction looks like a declaration - it is!
+		(int) (x); // it is not variable x of type int
+		cout << "me: what are you, x? x: I am '" << typeid(x).name() << "' *troll_face*" << endl;
+		// and... it is int...
+		// TODO find confusin declaration with can be mentioned as constructor call but it is not
+	}
+	{
+		// TODO what is the name of this feature? extraction?
+		auto [x, y] = tuple { 13, 42 };
+		cout << "[x, u] is [" << x << ", " << y << "]" << endl;
 
+		WILL_NOT_COMPILE(
+			auto [x, y] = { 13, 42 }; // TODO why :,( it look normal...
+		);
+	}
 }
