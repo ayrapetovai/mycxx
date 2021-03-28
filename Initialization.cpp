@@ -19,22 +19,22 @@ int main() {
     }
     {
         // list initialization {} does not allow narrowing - when initial value has to be truncated
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             short x{ 1000000 }; // compilation error: 1000000 requires truncating
         );
         short x{ (short)1000000 }; // ok: (sort) 1000000 is truncated explicitly
 
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             int x{ 0.0f }; // float|double -/-> int|short|long
         );
 
         // TODO Stroustrup says no, but acutaly it is compile in vc++17, check on mac os    
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             double xx{ 1 }; // int|short|long -/-> float|double
         );
 
         // TODO Stroustrup says no, but acutaly it is compile in vc++17, check on mac os
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             float x{ 0.0 }; // here, 0.0 is double, double -/-> float
         );
         {
@@ -68,11 +68,12 @@ int main() {
             int local_variable;
             cout << "global_variable int with no intializer " << EQUALS_STRING(global_variable, int{}) << " int{}" << endl;
             
-            WILL_NOT_COMPILE(
+            COMPILATION_ERROR(
                 cout << local_variable << endl; // local_variable is used without initialization
             );
 
             int* free_store_variable = new int; // free_store_variable is not initialized, TODO if class's constructor is to be called, wich it is? Default constructor, I guess, but why value is random with vc++17?
+#pragma warning(suppress: 6001) // using uninitialized memory, with vc++17
             cout << "free_store_variable int with no intializer " << EQUALS_STRING(*free_store_variable, int{}) << " int{}" << ", it is " << *free_store_variable << endl; // -842150451 with vc++17, 0 with mac os g++17. TODO why?
             delete free_store_variable;
         }

@@ -1,15 +1,24 @@
 #include<iostream>
 #include<complex>
+#include"Utils.hpp"
 
 using namespace std;
 
-// std::initializer_list<T> is '{' expression<T> [ ',' expressions<T> ] '}'
-// expression<T> means "expression of type T"
+// initializer_list mus be homogeneous if it's type is to be deduces by auto:
+//     std::initializer_list<T> is '{' expression<T> [ ',' expressions<T> ] '}'
+//     expression<T> means "expression of type T"
+// otherwise it can hold values of diferent types (TODO why? Is it steal initialier_list<T>?)
 
 int main() {
     // TODO variable of wich types can we intialize wiht initializer_list?
     {
-        int a[] = { 1, 2, 3 }; // array initializer
+        int a[] = { 1, 2, 3 }; // array initializer, homogeneous initializer list
+    }
+    {
+        auto x = {1, 2, 3};
+        COMPILATION_ERROR(
+            auto x = { 1, 2, "3" }; // cannot deduce type, ther type deducing is neaded homogeneous initializer_list must have same T arguments
+        );
     }
     {
         struct TheQuestion {
@@ -18,8 +27,10 @@ int main() {
         };
         TheQuestion tw = { 42, "'the mine question of ...'" }; // struct initializer (exists by default)
         cout << "struct initialized, filds: " << tw.question << ", " << tw.answer << endl;
+        cout << "struct initialized, filds: " << tw.question << ", " << tw.answer << endl;
     }
     {
+        // TODO prove by assembly
         class InitListConstructorExampleOneField {
             int x;
         public:
@@ -36,6 +47,7 @@ int main() {
         cout << endl;
     }
     {
+        // TODO prove by assembly
         class InitListConstructorExampleTwoFields {
             int x;
             int y;
@@ -48,7 +60,7 @@ int main() {
             }
         };
         cout << "Declare variable: InitListConstructorExampleTwoFields ice = { 1 , 2 } ";
-        InitListConstructorExampleTwoFields ice = { 1 , 2 }; // initializer_list is to be crated, memory occupied
+        InitListConstructorExampleTwoFields ice = { 1 , 2 }; // non-homogeneous initializer_list is to be crated, memory occupied
         cout << " instance size is " << sizeof(ice) << endl;
     }
     {
@@ -56,11 +68,23 @@ int main() {
         complex<double> z = { 0, 3.14159 }; // "use construtor". But vc++17 does not use construtor directly is creates initialzier_list<double>?
     }
     {
-        // we can iterate over initializer_list :)
+        // we can iterate over homogeneous initializer_list :)
         cout << "initializer_list<int>";
         for (const auto& x : { 1 , 2, 3, 4 }) {
             cout << " " << x;
         }
         cout << " for(:)" << endl;
+    }
+    {
+        class WithGeterogeneousFields {
+            int integer;
+            double real;
+        public:
+            COMPILATION_ERROR(
+                WithGeterogeneousFields(const initializer_list< ? >& il) // cannot declare or instantiate template of "multiple" type
+            )
+                WithGeterogeneousFields(const int& i, const double& d) : integer(i), real(d) {}
+        };
+        WithGeterogeneousFields x = { 1, 1.1 }; // will not compile for constructor(int& i, double& d) - no const, alsow compiles for constructor(int i, double d)
     }
 }

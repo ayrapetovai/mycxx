@@ -88,13 +88,13 @@ int main() {
     cout << "signed char " << (typeid(scx) == typeid(uscx)? "==": "!=") << " unsigned char" << endl;
     // cannot assign pointers to eachother, but can assign actual values.
     // no pointer conversion between signed and unsigned
-    WILL_NOT_COMPILE(
+    COMPILATION_ERROR(
         char* pcx = &uscx;           // value of type "unsigned char *" cannot be used to initialize entity of type "char *"
     );
-    WILL_NOT_COMPILE(
+    COMPILATION_ERROR(
         signed char* pscx = &uscx;   // value of type "unsigned char *" cannot be used to initialize entity of type "signed char *"
     );
-    WILL_NOT_COMPILE(
+    COMPILATION_ERROR(
         unsigned char* puscx = &scx; // value of type "signed char *" cannot be used to initialize entity of type " unsigned char *"
     );
     char vcx = uscx;            // ok
@@ -127,10 +127,10 @@ int main() {
     cout << "archaic_char is " << archaic_char << endl;
 
     print_paragraph_header("void");
-    WILL_NOT_COMPILE(
+    COMPILATION_ERROR(
         void x;
     );
-    WILL_NOT_COMPILE(
+    COMPILATION_ERROR(
         void& r;
     );
     void f(); // funtion that does not return value

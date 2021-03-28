@@ -28,7 +28,7 @@ namespace N {
         }
         A::x; // x of class A
 
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             void bar() {} // cannot declare non-global, non-class, non-struct fanction, use labdas
         );
 
@@ -66,7 +66,7 @@ int main() {
         cout << "me: what are you, x? x: I am '" << typeid(x).name() << "' *troll_face*" << endl;
         // and... it is int...
         // TODO find confusin declaration with can be mentioned as constructor call but it is not
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             int y(); // TODO why not?
         );
     }
@@ -82,7 +82,7 @@ int main() {
         auto [x, y] = tuple { 13, 42 };
         cout << "[x, u] is [" << x << ", " << y << "]" << endl;
 
-        WILL_NOT_COMPILE(
+        COMPILATION_ERROR(
             auto [x, y] = { 13, 42 }; // TODO why :,( it look normal...
         );
     }
