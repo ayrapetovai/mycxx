@@ -9,6 +9,7 @@ include(FetchContent)
 #FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git GIT_TAG v2.13.1)
 #FetchContent_MakeAvailable(Catch2)
 
+// TODO compile all soures in with some generic aproch
 add_executable (HelloWorld HelloWorld.cpp)
 add_executable (Vector Vector.cpp)
 add_executable (FundamentalTypes FundamentalTypes.cpp)
