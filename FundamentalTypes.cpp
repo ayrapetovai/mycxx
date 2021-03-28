@@ -56,7 +56,7 @@ int main() {
 	cout << "bool(true) is " << true << endl;    // 1
 	cout << "bool(false) is " << false << endl;  // 0
 	
-												 // only zero integer is false. If integer is non zero it is true.
+	// only zero integer is false. If integer is non zero it is true.
 	cout << "int(0)" << bool_to_string(int(0)) << endl;   // false
 	cout << "int(1)" << bool_to_string(int(1)) << endl;   // true
 	cout << "int(-1)" << bool_to_string(int(-1)) << endl; // true
@@ -126,4 +126,12 @@ int main() {
 	cout << "size of pointer is " << sizeof(pv) << endl;
 
 	// size_t is an implementation-defined unsigned integer of some bytes to represent size of an object in bytes.
+	print_paragraph_header("initialization");
+	{
+		int x;
+		// cout << "default value for int is " << x << endl; // vc++17 error: Run-Time Check Failure #3 - The variable 'x' is being used without being initialized.
+		cout << "default value char() is '" << char() << "', as int == " << (int) char() << endl;
+		cout << "default value int() is " << int() << endl;
+		cout << "default value double() is " << double() << endl;
+	}
 }

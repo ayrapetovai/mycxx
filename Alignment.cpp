@@ -48,6 +48,8 @@ int main() {
 			int int_field;
 		})
 		cout << "alignof packed_struct is by " << alignof(packed_struct) << " bytes, but size is " << sizeof(packed_struct) << endl;
+
+		// TODO alignas
 	}
 }
 
