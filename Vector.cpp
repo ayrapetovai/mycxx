@@ -17,7 +17,7 @@ ostream& operator<< (ostream& out, const vector<T>& v) {
 }
 
 int main() {
-	vector<int> v = { 1, 2, 3 };
-	cout << v << endl;
-	return 0;
+    vector<int> v = { 1, 2, 3 };
+    cout << v << endl;
+    return 0;
 }
