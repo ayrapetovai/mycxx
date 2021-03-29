@@ -22,6 +22,8 @@ using namespace std;
 //              /              \  /              \
 //       lvalue {i&!m}     xvalue {i&m}     prvalue {!i&m}
 
+// "object havs an identity" means: the object resides at a specific address in memory, and it can be accessed if you know its address and its type.
+
 // TODO make examples
 
 int main() {

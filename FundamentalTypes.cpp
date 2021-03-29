@@ -116,7 +116,7 @@ int main() {
     int ii2 = char(257);
     cout << "value of char(257) put in int is " << ii2 << endl; // 1
 
-    signed char signed_char = -160;
+    signed char signed_char = -160; // warning: implicit conversion from 'int' to 'char' changes value from 24930 to 98
     unsigned char unsigned_char = signed_char;
     cout << "-160 in hex is " << hex << (short)-160 << " in bin is " << bitset<16> ((short)-160) << dec << endl;
     cout << "signed_char(-160)           is " << (int) signed_char << " hex " << hex << (int) signed_char << dec << endl;
