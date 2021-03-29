@@ -21,6 +21,8 @@ add_executable (Declaration Declaration.cpp)
 add_executable (Initialization Initialization.cpp)
 add_executable (InitializerList InitializerList.cpp)
 add_executable (AutoDecltype AutoDecltype.cpp)
+add_executable (Move Move.cpp)
+add_executable (ObjectLifeTime ObjectLifeTime.cpp)
 #add_executable (FundamentalTypesTest FundamentalTypesTest.cpp)
 #target_link_libraries(FundamentalTypesTest PRIVATE Catch2::Catch2)
 
