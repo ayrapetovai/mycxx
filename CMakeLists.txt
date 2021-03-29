@@ -25,6 +25,7 @@ add_executable (Move Move.cpp)
 add_executable (ObjectLifeTime ObjectLifeTime.cpp)
 add_executable (TypeAlias TypeAlias.cpp)
 add_executable (Pointer Pointer.cpp)
+add_executable (Array Array.cpp)
 #add_executable (FundamentalTypesTest FundamentalTypesTest.cpp)
 #target_link_libraries(FundamentalTypesTest PRIVATE Catch2::Catch2)
 
