@@ -72,9 +72,17 @@ int main() {
     }
     {
         // type *pointer/&reference + x == address + sizeof(type) * x
-        int a[3] = { 1, 2 , 3 };
+        int a[3] = { 1, 2, 3 };
         int* pi = a;
         cout << "type* pinter + 1 (" << (pi + 1) << ") == address + sizeof(type) (" << (&a[1]) << ") " <<  endl;
         cout << "&a[1] + 1 (" << (&a[1] + 1) << ") == &a[2] (" << &a[2] << ") " << endl;
+    }
+    {
+        int a[1];
+        int* pi = a;
+        COMPILATION_ERROR(
+            a = pi; // error: cannot assign pinter to array (based on declaration)
+            // The implicit conversion of the array argument to a pointer means that the size of the array is lost
+        );
     }
 }
