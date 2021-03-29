@@ -28,13 +28,12 @@ namespace B {
     }
 }
 
-// example from the book (6.3.6.3, page 165) does not work with vc++17, but it works in clang
-#ifndef _WIN32
-    template<class T, class U>
-    auto operator+(const complex<T>& a, const complex<U>& b)->complex<decltype(T{} + U{}) > {
-        return complex<decltype(T{} + U{})>{ a.real() + b.real(), a.imag() + b.imag() };
-    }
-#endif
+// example from the book (6.3.6.3, page 165)
+template<class T, class U>
+auto operator+(const complex<T>& a, const complex<U>& b)->complex<decltype(T{} + U{}) > {
+    return complex<decltype(T{} + U{})>{ a.real() + b.real(), a.imag() + b.imag() };
+}
+
 
 int main() {
     // ACHTUNG!!!
@@ -66,10 +65,8 @@ int main() {
         )
         {
             // deltype is to be used when type of an expression must be computed
-#ifndef _WIN32
-                auto sum = complex<int>{ 1, 1 } + complex<double>{ 1.0, 1.0 };
-                cout << "complex sum type is " << typeid(sum).name() << endl;
-#endif
+            auto sum = complex<int>{ 1, 1 } + complex<double>{ 1.0, 1.0 };
+            cout << "complex sum type is " << typeid(sum).name() << endl;
         }
     }
 }
