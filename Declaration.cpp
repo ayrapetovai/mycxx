@@ -37,7 +37,10 @@ namespace N {
 
 int y = N::A::x;
 
-// paragraph 6.3, page 155 (166)
+// C++ offers two related meanings of ‘‘constant’’:
+// • constexpr: Evaluate at compile time
+// • const: Do not modify in this scope
+
 int main() {
     // TODO declaration with definition
     // TODO initialization
@@ -53,11 +56,11 @@ int main() {
         cout << "int* name is " << typeid(name1).name() << ", int(*name) is " << typeid(name2).name() << endl;
     }
     {
-        int* x, y; // x is pointer to int, y is int
+        int* x, y; // x is a pointer to an int, y is an int
         cout << "x is " << typeid(x).name() << ", y is " << typeid(y).name() << endl;
     }
     {
-        int a[1], * b; // a is array, b is pointer
+        int a[1], * b; // a is an array, b is a pointer
         cout << "a is " << typeid(a).name() << ", b is " << typeid(b).name() << endl;
     }
     {
@@ -78,12 +81,48 @@ int main() {
         cout << "me: what are you, z2? z2: I am '" << typeid(z2).name() << endl;
     }
     {
-        // TODO what is the name of this feature? extraction?
+        // TODO what is the name of this feature? extraction? What is the grammar context in wich [] works? declaration with auto?
         auto [x, y] = tuple { 13, 42 };
         cout << "[x, u] is [" << x << ", " << y << "]" << endl;
 
         COMPILATION_ERROR(
-            auto [x, y] = { 13, 42 }; // TODO why :,( it look normal...
+            auto [x, y] = { 13, 42 }; // TODO why :,( it looks normal...
+        );
+    }
+// const
+    {
+        // error becouse we cannot initialize value later (oh, yes we could, like in Java... but no)
+        COMPILATION_ERROR(
+            const int x; // default initialization of an object of const type 'const int'
+        );
+    }
+    {
+        int x = 2;
+        // if name is constexpr all initializing values must be constexpr or const
+        COMPILATION_ERROR(
+            constexpr y = x; // C++ requires a type specifier for all declarations 
+        );
+        constexpr int cex = 2; // literal are constexprs
+        constexpr int y = cex; // ok, becouse of cex's constexpr
+    }
+    {
+        const int x = 2;
+        constexpr int y = x; // ok, becouse x is const, and can be evaluated at compile time
+
+        int a = 1, b = 2;
+        const int z = a + b;
+        COMPILATION_ERROR(
+            constexpr int n = z; // initializer of 'z' is not a constant expression, it depends on non-constant values
+        );
+    }
+    {
+        // const is an attribute of a name, not of an object it referes to
+        const int a[2] = { 1, 2 }; // a[i] is a const int
+        COMPILATION_ERROR(
+            a[0] = 1; // Cannot assign to variable 'a' with const-qualified type 'const int [2]'
+        );
+        COMPILATION_ERROR(
+            a = new int[3]; // neither we can do this: Cannot assign to variable 'a' with const-qualified type 'const int [2]' 
         );
     }
 }
