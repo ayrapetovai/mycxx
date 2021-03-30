@@ -58,10 +58,13 @@ int main() {
         cout << "beep at the end of the message\a\n" << endl; // works in mac os :)
     }
     {
+// vc++17: error C2001. Cannot manage with macros.
+#ifndef _WIN32
         COMPILATION_ERROR(        
             char s[] = "abc
                 dfg"; // break line like this does not work
         );
+#endif
     }
     {
         char s1[] = "abc"

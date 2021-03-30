@@ -24,6 +24,8 @@ using namespace std;
 
 // "object havs an identity" means: the object resides at a specific address in memory, and it can be accessed if you know its address and its type.
 
+// In a type name notation X& means "reference to X", it is "lvalue reference"
+
 // TODO make examples
 
 int main() {

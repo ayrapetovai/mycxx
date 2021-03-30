@@ -96,6 +96,7 @@ int main() {
         int dist = reinterpret_cast<char*>(a+2) - reinterpret_cast<char*>(a); 
         cout << "distance in bytes is " << dist << endl; // 16
     }
+// const
     {
         // const influicing on a name to it's right.
         // When using a pointer, two objects are involved: the pointer itself and the object pointed to.
@@ -110,14 +111,34 @@ int main() {
         delete [] chp;
 
         char * const cp = new char[]{ "abc" }; // pointer cannot be modifier, but value can be modified.
+        // ! the operator that makes cp constant is '* const' !
         cp[0] = 'A';
         COMPILATION_ERROR(
             cp = new int[]{ "def" };
         );
         delete [] cp;
 
-        // however...
+        // however... there are no operator 'const *', only '* const'
         char const *p = "abc"; // is a variable pointer to const char, as conat char *p
         cout << "char const* " << EQUALS_STRING(typeid(char const*), typeid(const char*)) << " const char*" << endl;
+    }
+    {
+        const int x = 42;
+        const int* p = &x; // ok, p guaranties that value of x will not be changes throw it
+        // const ?safety? of C++
+        COMPILATION_ERROR(
+            int* const p = &x; // now p guaranties to point only to x, and does not guarantee that x will not be changed
+        );
+    }
+    {
+        const int& r = 2; // kind of abstraction...
+        int a = 1, b = 2;
+        COMPILATION_ERROR(
+            int& r = 3;       // 3 is an rvalue, if reference is not const, it cannot guarantee writ to 1 (1 is not a boject, it is value in assembly command)
+            int& tmp = a + b; // same thing
+        );
+
+        const int& tmp = a + b; // intermidiate value of a + b is placed in a temporary variable, TODO prove by asm
+        cout << "tmp is an ojbect? value " << tmp << ", type " << typeid(tmp).name() << ", size " << sizeof(tmp) << ", address " << &tmp << endl;
     }
 }
