@@ -11,6 +11,10 @@ using namespace std;
 // • constexpr: Evaluate at compile time
 // • const: Do not modify in this scope
 
+// use const T& reference to prevent modification
+// use T&& reference implement "destructive read", instead of "deep copy"
+
+
 int main() {
     cout << "size of pointer (void*) is " << sizeof(void*) << " bytes" << endl;
     {
@@ -122,23 +126,60 @@ int main() {
         char const *p = "abc"; // is a variable pointer to const char, as conat char *p
         cout << "char const* " << EQUALS_STRING(typeid(char const*), typeid(const char*)) << " const char*" << endl;
     }
+// T& - lvalue reference, non-const can bind to lvalue, const can bing to rvalue
     {
         const int x = 42;
         const int* p = &x; // ok, p guaranties that value of x will not be changes throw it
-        // const ?safety? of C++
+        // What is the rull? C++ is "const safety"?
         COMPILATION_ERROR(
             int* const p = &x; // now p guaranties to point only to x, and does not guarantee that x will not be changed
         );
     }
     {
         const int& r = 2; // kind of abstraction...
-        int a = 1, b = 2;
+        int a = 13, b = 42;
         COMPILATION_ERROR(
-            int& r = 3;       // 3 is an rvalue, if reference is not const, it cannot guarantee writ to 1 (1 is not a boject, it is value in assembly command)
+            int& r = 3;       // 3 is an rvalue, if reference is not const, it cannot guarantee writ to 1 (1 is not an object, it is value in assembly command)
             int& tmp = a + b; // same thing
         );
 
-        const int& tmp = a + b; // intermidiate value of a + b is placed in a temporary variable, TODO prove by asm
+        const int& tmp = a + b; // intermidiate value of a + b is placed in a temporary variable (an object, it has an address)
+        /* there are 3 objects on the stack
+         mov     dword ptr [rbp - 8], 13      # stack['a'] := 13                     # first object
+         mov     dword ptr [rbp - 12], 42     # stack['b'] := 42                     # second object
+         mov     eax, dword ptr [rbp - 8]     # reg[eax] := stack['a']
+         add     eax, dword ptr [rbp - 12]    # reg[eax] := reg[eax] + stack['b']
+         mov     dword ptr [rbp - 28], eax    # stack['tmp'] := reg[eax]             # third object
+         */
         cout << "tmp is an ojbect? value " << tmp << ", type " << typeid(tmp).name() << ", size " << sizeof(tmp) << ", address " << &tmp << endl;
+    }
+// T&& - rvalue reference, non-const can bind to a rvalue, const can bing to a rvalue, const cannot bing to lvalue, because 'const' means "do not modifiy", but && says "read destructivly" (take ovnership)
+    {
+        int&& r = 3; // ok, binds to a temporaty value, compare to 'int& r = 3', wich does not compile
+        int x = 3;
+        COMPILATION_ERROR(
+            const int&& r = x; // Rvalue reference to type 'const int' cannot bind to lvalue of type 'int'
+            int&& r = x;      // Rvalue reference to type 'int' cannot bind to lvalue of type 'int'
+        );
+    }
+    {
+        // TODO does not work!
+        char s[] = "Hello!";
+        char* p = s;
+        cout << "message: ";
+        while(*p) {
+            cout << ++*p; // this ++*p does not increasing letter codes... as *p++
+        }
+        cout << endl;
+    }
+    {
+        // null reference
+        COMPILATION_ERROR(
+            int& x = *(nullptr); // Indirection requires pointer operand ('nullptr_t' invalid)
+        );
+        int& x = *((int*)nullptr); // no runtime error, but the code is invalid
+        RUNTIME_ERROR(
+            int a = x * 2; // Segmentation fault, x is 0
+        );
     }
 }
