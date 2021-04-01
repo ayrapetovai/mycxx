@@ -7,6 +7,8 @@ using namespace std;
 // identifier - /[_a-zA-Z$]([_0-9a-zA-Z$])*/, no keywords, no @, no $ (but vc++17 does not complain)
 // names that starts with /__/ or /_[A-Z]/ are reserved, better not to use them
 
+// user defined types: struct, class, union, enum, enum class
+
 int x = 2; // global scope x
 
 namespace N {
