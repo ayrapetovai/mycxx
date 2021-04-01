@@ -78,4 +78,19 @@ int main() {
 second line)"};
         cout << "RAW STRING: " << s << endl;
     }
+    {
+        COMPILATION_ERROR(
+            char s[2] = "AB"; // Initializer-string for char array is too long
+        );
+        char a[2] = { 'A', 'B' }; // OK
+        
+        // '\0' is to be added to the end of a string always, eveing if the string already has one
+        COMPILATION_ERROR(
+            char b[3] = "AB\0"; // Initializer-string for char array is too long
+        );
+        char b[4] = "AB\0";
+        cout << R"(strlen("AA\0") is )" << strlen(b) << R"(, but sizeof(char [4]{"AB\0"}) is )" << sizeof(b) << ", becouse of char [4]" << endl;
+        // {}-style array initialization
+        char c[4] { "ABC" };
+    }
 }
