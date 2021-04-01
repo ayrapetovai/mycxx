@@ -163,12 +163,12 @@ int main() {
         );
     }
     {
-        // TODO does not work!
         char s[] = "Hello!";
         char* p = s;
         cout << "message: ";
         while(*p) {
-            cout << ++*p; // this ++*p does not increasing letter codes... as *p++
+            //cout << ++*p; // this ++*p does not increasing letter codes... as *p++ // TODO does not work!
+            cout << *p++;
         }
         cout << endl;
     }
@@ -177,7 +177,7 @@ int main() {
         COMPILATION_ERROR(
             int& x = *(nullptr); // Indirection requires pointer operand ('nullptr_t' invalid)
         );
-        int& x = *((int*)nullptr); // no runtime error, but the code is invalid
+        int& x = *((int*)nullptr); // compiles, no runtime error, but this code is invalid
         RUNTIME_ERROR(
             int a = x * 2; // Segmentation fault, x is 0
         );
