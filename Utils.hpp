@@ -6,8 +6,10 @@
 
 #define RUNTIME_ERROR(...) /**/
 
-#define EQUALS_STRING(__VALUE1__, __VALUE2__) ((__VALUE1__ == __VALUE2__)? "==": "!=")
+#define EQUALS_STRING(VALUE1, VALUE2) ((VALUE1 == VALUE2)? "==": "!=")
 
-#define LESS_STRING(__VALUE1__, __VALUE2__) ((__VALUE1__ < __VALUE2__)? "<": ">=")
+#define LESS_STRING(VALUE1, VALUE2) ((VALUE1 < VALUE2)? "<": ">=")
+
+#define YESNO_STRING(VALUE) (VALUE? "yes": "no")
 
 #endif // _MYCXX_UTILS_HPP
