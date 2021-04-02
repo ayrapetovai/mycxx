@@ -4,6 +4,8 @@
 
 using namespace std;
 
+// Every struct must have unique definition in program
+
 // An array is an aggregate of elements of the same type. In its simplest form, a struct is an aggregate of elements of arbitrary types
 
 // struct declaration, all below structs belong to different types (type name plays the role)
@@ -74,7 +76,7 @@ int main() {
         Struct_name1 s2{ 3, 4 };
         s1 = s2; // assigning works by default
         cout << "s2 := s1; s2 now: {" << s2.field1 << ", " << s2.field2 << "}" << endl; // {3, 4}
-        
+
         // comparing does not work by default
         COMPILATION_ERROR(
             s1 == s2; // Invalid operands to binary expression ('Struct_name1' and 'Struct_name1')
@@ -109,6 +111,48 @@ int main() {
         int32_t gap2 = *((int32_t*)&mdop->c);
         cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, econd gap is " << bitset<sizeof(int32_t)*8>(gap2) << endl;
         delete mdop;
+    }
+    {
+        // define struct in some local scope
+        struct Point { int x; int y; };
+        Point points[3] = { {4,2}, {6,2}, {1, 0} }; // we can do array of structs, and initialize it with {}-initializer
+
+        struct Array { Point elements[3]; };
+        Array arr = {{ {4,2}, {6,2}, {1, 0} }}; // {}-initializer
+    }
+    {
+        struct Int { int x; };
+        Int i1 = { 1 };
+        Int i2 = i1; // ok, TODO is constructor(const T& other) automaticly generated?
+        Int i3 = move(i1); // ok, TODO is constructor(const T&& other) automaticaly generated or falback to constructor(const T& other) is made?
+
+        COMPILATION_ERROR(
+            int x = i2; // No viable conversion from 'Int' to 'int'
+        );
+    }
+    {
+        // A POD ("Plain Old Data") is an object that can be manipulated as "just data"
+        // without worrying about complications of class layouts or user-defined semantics for construction, copy, and move.
+
+        // A POD must have trivial default constructor (either user-defined or default).
+        // A POD must not have virtual methods (otherwise each object has pointer to vtable, if we have an array of Base type - the vtable
+        // pointers of it's elements may be different - different Subtypes, cannot copy byte by byte).
+        // A POD must not have any nonstandard copy/move semantics or destructor, pointer fields.
+
+        struct LikelyPOD { int x; double y; };
+        struct LikelyPODSubType: LikelyPOD { char z; };
+        cout << "Q: Is { int, double } a POD? A: " << YESNO_STRING(is_pod<LikelyPOD>::value) << endl; // yes
+        cout << "Q: Is { {int, double}, char} a POD? A: " << YESNO_STRING(is_pod<LikelyPODSubType>::value) << endl; // no
+    }
+    {
+        // structures with bit-fields
+        struct BitFilds {
+            short x: 12; // = 1, bit-member initialier is c++20 extension
+            short y: 4;
+        };
+        BitFilds bf{ 1, 1};
+        cout << "{ x:12 = 1, y:4 = 1 } bits are " << bitset<sizeof(BitFilds)*8>(*(int32_t*)(&bf)) << endl;
+        cout << "Q: Is { x:12, y:4 } a POD? A: " << YESNO_STRING(is_pod<BitFilds>::value) << endl; // yes
     }
 }
 
