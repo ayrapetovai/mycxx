@@ -145,14 +145,57 @@ int main() {
         cout << "Q: Is { {int, double}, char} a POD? A: " << YESNO_STRING(is_pod<LikelyPODSubType>::value) << endl; // no
     }
     {
-        // structures with bit-fields
+        // structures with bit-fields, sizeof(short) is 2
         struct BitFilds {
-            short x: 12; // = 1, bit-member initialier is c++20 extension
+            short x: 12; // = 1, bit-member initializer is c++20 extension
             short y: 4;
         };
+        // bit-fields are packed
         BitFilds bf{ 1, 1};
-        cout << "{ x:12 = 1, y:4 = 1 } bits are " << bitset<sizeof(BitFilds)*8>(*(int32_t*)(&bf)) << endl;
+        cout << "align of { x:12, y:4 } is " << alignof(bf) << endl; // 2
+        cout << "size of { x:12, y:4 }  is " << sizeof(bf) << " bytes" << endl; // 2, packed!
+        cout << "{ x:12 = 1, y:4 = 1 } bits are " << bitset<sizeof(BitFilds)*8>(*(int32_t*)(&bf)) << endl; // 0001000000000001
         cout << "Q: Is { x:12, y:4 } a POD? A: " << YESNO_STRING(is_pod<BitFilds>::value) << endl; // yes
+    }
+    // bit-fields can can belong only to integral types
+    {
+        // access to bit-fields in asm:
+        // clang++ -S -mllvm --x86-asm-syntax=intel file.cpp
+        struct BitFields {
+            char left:4;
+            char right:4;
+        };
+        BitFields bf;
+        bf.left = 1;
+        bf.right = 1;
+        /*
+         mov     cl, byte ptr [rbp - 8]
+         and     cl, -16                    # 0b11110000
+         or      cl, 1                      # 0b00000001
+         mov     byte ptr [rbp - 8], cl
+         mov     cl, byte ptr [rbp - 8]
+         and     cl, 15                     # 0b00001111
+         or      cl, 16                     # 0b00010000
+         mov     byte ptr [rbp - 8], cl
+         */
+    }
+    {
+        // bit-field's address
+        struct BitFields {
+            char x:3;
+            char y:5;
+        };
+        BitFields bf{ 1, 1};
+        COMPILATION_ERROR(
+            &bf.y; // Address of bit-field requested
+            &bf.x; // Address of bit-field requested 
+        );
+        const char& cref = bf.x; // ok, copy field value
+        cout << "for { x:3, y:5} const ref to x gives value " << (int)cref << endl; // 1
+        cout << "&(const ref to struct {x:3,y:5}.x) " << EQUALS_STRING((int64_t)&cref, (int64_t)&bf) << " &(struct {x:3,y5})" << endl;
+        COMPILATION_ERROR(
+            char& ncref = bf.y; // Non-const reference cannot bind to bit-field 'y'
+        );
     }
 }
 
