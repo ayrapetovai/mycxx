@@ -8,6 +8,8 @@ const char* foo() {
     return "hello"; // OK, statycli allocated, will not be destroyed
 }
 
+// TODO std::to_chars, std::from_chars
+
 int main() {
 
     cout << "basic string" << " " << typeid(R"()").name() << endl;
