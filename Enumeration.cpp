@@ -17,6 +17,7 @@ enum class ClassEnumColor { // definition
     blue, // ,
 };
 
+// TODO Java style enum
 int main() {
     {
         // plain enum can be casted to int implicitly, class enum cannot.
