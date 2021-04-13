@@ -103,4 +103,8 @@ int main() {
         // function is declared as void (*name)(int [][5], int rows)
         baz_taking_2darray_fisrt_component_is_of_unknoweni_size(a, 3);
     }
+    {
+        int size = 10;
+        int a[size]; // size is not a constexpr
+    }
 }
