@@ -9,3 +9,10 @@ out/
 
 # vim
 **/*.*~
+
+# idea
+.idea/**
+cmake-build-debug/**
+
+# xcode
+build-xcode/**
