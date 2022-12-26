@@ -105,7 +105,7 @@ int main() {
     cout << "On my machine char is " << (numeric_limits<char>::is_signed? "signed": "unsigned") << ", " << sizeof(char) << " bytes, in [" << numeric_limits<char>::min() << ", " << numeric_limits<char>::max() << "]" << endl;
 #ifdef _WIN32
     char c = 'Ю';     // compilation error on Mac OS: Character too large for enclosing character literal type [character_too_large]
-    wchar_t wc = 'Ю'; // wchar_t - size is platform dependent, wide enough to hold big charcodes on that platform
+    wchar_t wc = 'Ю'; // compilation error on Mac OS: wchar_t - size is platform dependent, wide enough to hold big charcodes on that platform
     cout << "8 bit char is '" << c << "', 16 bit char is '" << wc << "'" << endl; // vc++20: compilcation error: cannot call function "std::operator<<(std::basic_ostream<char, _Traits> &, const char8_t *) [с _Traits=std::char_traits<char>]", it is deleted
     cout << "8 bit char is " << (int)c << " as int" << endl;   // -32
     cout << "16 bit char is " << (int)wc << " as int" << endl; // 65502
