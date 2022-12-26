@@ -3,39 +3,39 @@
 
 using namespace std;
 
-void foo_takeing_an_array_of_unknowen_size(int a[]) {
+void foo_taking_an_array_of_unknown_size(int a[]) {
     // Sizeof on array function parameter will return size of 'int *' instead of 'int []' 
-    cout << "in function foo: size of a is missing, sizeof is " << sizeof(a) << endl; // cant figure out size of array by pointer, prints 8
-    
+    cout << "in function foo: size of `a` is missing, sizeof is " << sizeof(a) << endl; // cant figure out size of array by pointer, prints 8 - size of `int*`
+
     // Cannot build range expression with array function parameter 'a' since parameter with array type 'int []' is treated as pointer type 'int *' 
     COMPILATION_ERROR(
         for (int x: a) {}
     );
 }
 
-void bar_takeing_an_array_of_size_5(int [5]) {
+void bar_taking_an_array_of_size_5(int [5]) {
 }
 
 // Array has incomplete element type 'int []'
 COMPILATION_ERROR(
-    void baz_taking_2darray_of_unknowen_size(int a[][]) {}
-    // does not work, becouse a[i][j] is '∗(∗(a+i)+j)', where 'a' is a pointer, to compure 'a+i' compiler must know the size of
-    // the object that is pinted by 'a' i. e. first demension
+    void baz_taking_2d_array_of_unknown_size(int a[][]) {}
+    // does not work, because a[i][j] is '∗(∗(a+i)+j)', where 'a' is a pointer, to compute 'a+i' compiler must know the size of
+    // the object that is printed by 'a' i. e. first dimension
 );
 
 // Fortunately, the argument declaration m[][] is illegal because 
 // the second dimension of a multidimensional array must be known in order to find the location of an element.
-void baz_taking_2darray_fisrt_component_is_of_unknoweni_size(int a[][5], int rows) {
+void baz_taking_2d_array_first_component_is_of_unknown_size(int a[][5], int rows) {
 }
 
 int main() {
     {
         int a[1];
-        // access operation [i] with array is interpreted as 'array_begin_address + i' 'a + i', as tought 'a' is a pointer
+        // access operation [i] with array is interpreted as 'array_begin_address + i' 'a + i', as thought 'a' is a pointer
         cout << "array's int element's default value is " << a[0] << endl; // 0, TODO why initialized?
     }
     {
-        // size of array is a part of it's type, if it is not a function argument and size is not declared
+        // size of array is a part of its type, if it is not a function argument and size is not declared
         int a[] = {1, 2, 3}; // array initializer to the left from =, number of elements is "deduced"
         cout << "type of array contains size: " << typeid(a).name() << endl; // int [3]
         cout << "sizeof a is " << sizeof(a) << " bytes" << endl; // 12
@@ -65,16 +65,16 @@ int main() {
     {
         int a[] = {1, 2, 3};
         int j = 1;
-        cout << "subsripting a build-in array jth element is " << j[a] << endl; // 2
+        cout << "subscripting a build-in array jth element is " << j[a] << endl; // 2
     }
     {
         int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        foo_takeing_an_array_of_unknowen_size(a); // function param is declared as int[] - size of the a is lost
+        foo_taking_an_array_of_unknown_size(a); // function param is declared as int[] - size of the a is lost
         // compiler does not check sizes of arrays when passing one as function argument
-        bar_takeing_an_array_of_size_5(a); // function param is declared as int[5] - size is smaller, then size of the passed argument
+        bar_taking_an_array_of_size_5(a); // function param is declared as int[5] - size is smaller, then size of the passed argument
     }
     {
-        // 2D arrays are alligned in memory continuously
+        // 2D arrays are aligned in memory continuously
         const int rows = 3;
         const int columns = 5;
         int a[3][5];
@@ -92,19 +92,19 @@ int main() {
         // out: 0 1 2 3 4 10 11 12 13 14 20 21 22 23 24
     }
     {
-        int a[3][5]; // a is an array of arrays
+        int a[3][5]; // `a` is an array of arrays
         cout << "size of a" << sizeof(a) << endl; // 3
-        cout << "address of beginig of a is " << &a << ", address of the second element (arrays) of a is " << (a + 1) << endl; 
-        cout << "ditance in bytes betwin 1st and 2nd elements (arrays) of 'int a[3][5]' is ";
-        cout  << (reinterpret_cast<char*>(a + 1) - reinterpret_cast<char*>(&a)) << endl; // 20, becouse each a's element is int[5]
+        cout << "address of beginning of a is " << &a << ", address of the second element (arrays) of a is " << (a + 1) << endl;
+        cout << "distance in bytes between 1st and 2nd elements (arrays) of 'int a[3][5]' is ";
+        cout  << (reinterpret_cast<char*>(a + 1) - reinterpret_cast<char*>(&a)) << endl; // 20, because each a's element is int[5]
     }
     {
         int a[3][5];
         // function is declared as void (*name)(int [][5], int rows)
-        baz_taking_2darray_fisrt_component_is_of_unknoweni_size(a, 3);
+        baz_taking_2d_array_first_component_is_of_unknown_size(a, 3);
     }
     {
         int size = 10;
-        int a[size]; // size is not a constexpr
+        int a[size]; // size is not a constexpr, OK
     }
 }
