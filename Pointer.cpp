@@ -55,7 +55,7 @@ int main() {
         delete pi;
     }
     {
-        // nullptr reprezents empty pointer, it can be assigned to a pointer of any type
+        // nullptr represents empty pointer, it can be assigned to a pointer of any type
         int* pi = nullptr;
         // but not to integral type
         COMPILATION_ERROR(
@@ -129,8 +129,8 @@ int main() {
 // T& - lvalue reference, non-const can bind to lvalue, const can bing to rvalue
     {
         const int x = 42;
-        const int* p = &x; // ok, p guaranties that value of x will not be changes throw it
-        // What is the rull? C++ is "const safety"?
+        const int* p = &x; // ok, p guaranties that value of x will not be changed throw it
+        // What is the rule? C++ is "const safety"?
         COMPILATION_ERROR(
             int* const p = &x; // now p guaranties to point only to x, and does not guarantee that x will not be changed
         );
@@ -143,7 +143,7 @@ int main() {
             int& tmp = a + b; // same thing
         );
 
-        const int& tmp = a + b; // intermidiate value of a + b is placed in a temporary variable (an object, it has an address)
+        const int& tmp = a + b; // intermediate value of a + b is placed in a temporary variable (an object, it has an address)
         /* there are 3 objects on the stack
          mov     dword ptr [rbp - 8], 13      # stack['a'] := 13                     # first object
          mov     dword ptr [rbp - 12], 42     # stack['b'] := 42                     # second object
@@ -151,11 +151,11 @@ int main() {
          add     eax, dword ptr [rbp - 12]    # reg[eax] := reg[eax] + stack['b']
          mov     dword ptr [rbp - 28], eax    # stack['tmp'] := reg[eax]             # third object
          */
-        cout << "tmp is an ojbect? value " << tmp << ", type " << typeid(tmp).name() << ", size " << sizeof(tmp) << ", address " << &tmp << endl;
+        cout << "tmp is an object? value " << tmp << ", type " << typeid(tmp).name() << ", size " << sizeof(tmp) << ", address " << &tmp << endl;
     }
-// T&& - rvalue reference, non-const can bind to a rvalue, const can bing to a rvalue, const cannot bing to lvalue, because 'const' means "do not modifiy", but && says "read destructivly" (take ovnership)
+// T&& - rvalue reference, non-const can bind to a rvalue, const can bing to a rvalue, const cannot bing to lvalue, because 'const' means "do not modify", but && says "read destructively" (take ownership)
     {
-        int&& r = 3; // ok, binds to a temporaty value, compare to 'int& r = 3', wich does not compile
+        int&& r = 3; // ok, binds to a temporary value, compare to 'int& r = 3', wich does not compile
         int x = 3;
         COMPILATION_ERROR(
             const int&& r = x; // Rvalue reference to type 'const int' cannot bind to lvalue of type 'int'
