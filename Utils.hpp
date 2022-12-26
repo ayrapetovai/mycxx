@@ -13,12 +13,11 @@
 
 #define YESNO_STRING(VALUE) (VALUE? "yes": "no")
 
-std::string describe_type(const char* mangled)
-{
+std::string describe_type(const char* mangled) {
     int status;
     std::unique_ptr<char[], void (*)(void*)> result(
-            abi::__cxa_demangle(mangled, 0, 0, &status), std::free);
-    return result.get() ? std::string(result.get()) : "error occurred";
+            abi::__cxa_demangle(mangled, nullptr, nullptr, &status), std::free);
+    return result ? std::string(result.get()) : "error occurred";
 }
 
 #endif // _MYCXX_UTILS_HPP
