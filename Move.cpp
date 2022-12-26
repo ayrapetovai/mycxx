@@ -13,7 +13,7 @@ using namespace std;
 // glvalue (generalized left value):
 // xvalue (extraordinary value):
 //
-// Using 'i' for "has identity" and m for "moveable".
+// Using 'i' for "has identity" and m for "movable".
 // the book (6.4.1)
 //                         ___ value ___
 //                        /             \
@@ -37,12 +37,12 @@ class Verbose {
             cout << "Verbose(int id): " << id << endl;
             _id = id;
         }
-        // copy constructor, meant to do deep copy
+        // copy constructor, meant to do deep copy, works only in initialization semantics `T x = y;` or calls `foo(y);`, does not work in "copy semantics", like `x = y;`
         Verbose(const Verbose& other) {
             cout << "Verbose(const Verbose& other): " << other._id << " -> " << _id << endl;
             _id = other._id;
         }
-        // move constructor, meant to do light copy
+        // move constructor, meant to do light copy and "steal" data from `other` (adopt pointers to recourses)
         Verbose(Verbose&& other) {
             cout << "Verbose(Verbose&& other): " << other._id << " -> " << _id << endl;
             _id = other._id;
@@ -50,6 +50,7 @@ class Verbose {
         ~Verbose() {
             cout << "~Verbose(): " << _id  << endl;
         }
+        // assignment operator works only in "copy semantics", like `x = y;`, does not work in initialization semantics `T x = y;` or calls `foo(y);`
         Verbose& operator=(const Verbose& other) {
             cout << "operator=(const Verbose& other): " << other._id << " -> " << _id << endl;
             _id = other._id;
@@ -61,7 +62,7 @@ class Verbose {
 };
 
 ostream& operator<<(ostream& out, const Verbose& v) {
-    out << "{id: " << v.id() << "}";
+    out << "Verbose{id=" << v.id() << "}";
     return out;
 }
 
@@ -94,9 +95,18 @@ void move_swap_for_2nd_rvalue(T& a, T&& b) { // effectivly overloading move_swap
     b = move(tmp);
 }
 
+Verbose createVerbose(int id) {
+    return Verbose(id); // copy-semantics
+}
+
 int main() {
     Verbose a{1};
     cout << "var a is " << a << endl;
+
+    {
+        Verbose copy_of_a(a); // initialization semantics: Verbose(const Verbose& other)
+        cout << "var copy_of_a is " << copy_of_a << endl;
+    }
 
     Verbose b{2};
     cout << "var b is " << b << endl;
@@ -134,13 +144,36 @@ int main() {
     cout << "BEGIN: move swap overloaded for 2nd rvalue a and b" << endl;
     move_swap_for_2nd_rvalue(a, Verbose(3));
     // after this function 2 destructors are called, 1 for rvalue argument, 2 for tmp inside function scope
-    cout << "END:   move swap overloaded for 2nd rbalue a and b" << endl;
+    cout << "END:   move swap overloaded for 2nd rvalue a and b" << endl;
 
     cout << "now var a is " << a << endl;
     cout << "now var b is " << b << endl;
     cout << endl;
 
-    // references are redusing:
+    Verbose c = createVerbose(111); // initialization-semantics: only one call of `Verbose(int id)`
+    cout << "var c = createVerbose(111) is " << c << endl;
+
+    c = createVerbose(112); // copy-semantics: two calls: `Verbose(int id)` and `operator=(const Verbose& other)`
+    // temporary Verbose(_id = 112) from `createVerbose(112)` destructs here
+    cout << "c = createVerbose(112) is " << c << endl;
+
+    // Passing result of std::move() as a const reference argument; no move will actually happen
+    c = move(createVerbose(113)); // copy-semantics!!!: two calls: `Verbose(int id)` and `operator=(const Verbose& other)`
+    // temporary Verbose(_id = 113) from `createVerbose(113)` destructs here
+    cout << "c = move(createVerbose(113)) is " << c << endl;
+
+    // Passing result of std::move() as a const reference argument; no move will actually happen
+    c = move(Verbose(114)); // copy-semantics: Verbose(int id), operator=(const Verbose& other)
+    // temporary Verbose(_id = 114) destructs here
+    cout << "c = move(Verbose(114)) is " << c << endl;
+    cout << endl;
+
+    Verbose cc = move(Verbose(115)); // initialization-semantics: Verbose(int id), Verbose(Verbose&& other)
+    // !!! temporary Verbose(_id = 115) destructs here
+    cout << "var cc = move(Verbose(115)) is " << cc << endl;
+    cout << endl;
+
+    // references are reusing:
     using rr_i = int&&;
     using lr_i = int&;
     using rr_rr_i = rr_i&&; // ‘int && &&’ is an int&&
