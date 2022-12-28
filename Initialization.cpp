@@ -13,7 +13,7 @@ using namespace std;
 // zero initialization - object initialized by (converted) 0, used for static/global/thread-local objects.
 // value initialization - object always gets the value (initialized by constructor or zero initialized).
 // list initialization - object is initialized by braces (both direct-list-initialization or copy-list-initialization).
-// aggregate initialization - special form of list initialization is type is aggregate (structs, arrays, types of multiple members, not unions). std::is_aggregate_v<T>
+// aggregate initialization - special form of list initialization if type is aggregate (structs, arrays, types of multiple members, not unions). std::is_aggregate_v<T>
 // reference initialization - initializing a reference-type variable, the compiler selects between creating a reference to an object or creating a temporary object to which the reference points.
 
 // Aggregate structure (c++20):
