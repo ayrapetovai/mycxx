@@ -1,4 +1,5 @@
 #include<iostream>
+#include<magic_enum.hpp>
 #include"Utils.hpp"
 
 using namespace std;
@@ -20,9 +21,12 @@ enum class ClassEnumColor { // definition
 // TODO Java style enum
 int main() {
     {
-        // plain enum can be casted to int implicitly, class enum cannot.
-        cout << "plain enum color type is " << typeid(PlainEnumColor::blue).name() << endl;
-        cout << "class enum color type is " << typeid(ClassEnumColor::red).name() << endl;
+        // plain enum can be cast to int implicitly, class enum cannot.
+        cout << "plain enum color type is " << describe_type(typeid(PlainEnumColor::blue).name()) << endl;
+        cout << "class enum color type is " << describe_type(typeid(ClassEnumColor::red).name()) << endl;
+
+        static_assert(is_enum<PlainEnumColor>::value);
+        static_assert(is_enum<ClassEnumColor>::value);
 
         COMPILATION_ERROR(
             ClassEnumColor cc = PlainEnumColor::green; // Cannot initialize a variable of type 'ClassEnumColor' with an rvalue of type 'PlainEnumColor'
@@ -36,6 +40,9 @@ int main() {
         COMPILATION_ERROR(
             ClassEnumColor ec = 1; // Cannot initialize a variable of type 'ClassEnumColor' with an rvalue of type 'int'
         );
+        // As PlainEnumColor is set of integer values, what will be result of arithmetic operation:
+        cout << "typeof(PlainEnumColor::blue + 1) is " << describe_type(typeid(decltype(PlainEnumColor::blue + 1)).name()) << endl;
+        // outputs "int", "enumity" is missing.
     }
     {
         // enum class with enumerators of type, underlying type can be integral type only
@@ -43,7 +50,7 @@ int main() {
             one, two
         };
         cout << "EnumOfShorts: short's enumerator's size is " << sizeof(EnumOfShorts::one) << " bytes" << endl; // 2
-        cout << "EnumOfShorts's type " << typeid(EnumOfShorts::two).name() << endl; // non-integral type
+        cout << "EnumOfShorts's type " << describe_type(typeid(EnumOfShorts::two).name()) << endl; // non-integral type
         cout << "EnumOfShorts::two is " << (short) EnumOfShorts::two << endl;
 
         COMPILATION_ERROR(
@@ -93,6 +100,37 @@ int main() {
         COMPILATION_ERROR(
             if (ClassEnum::ce) {} // Value of type 'ClassEnum' is not contextually convertible to 'bool'
         );
+    }
+    {
+        enum class Numbers: char { // here `char` is "underlying type" of `enum class` Numbers.
+            one,  // 0
+            two,  // 1
+            three // 2
+        };
+
+        COMPILATION_ERROR(
+            // Non-integral type 'complex<float>' is an invalid underlying type
+            enum class CNumbers: complex<float> {};
+        )
+
+        enum class Boolean: bool {
+            True,  // false, 0
+            False, // true, 1
+            COMPILATION_ERROR(
+                // Enumerator value 2 is not representable in the underlying type 'bool'
+                Undecidable
+            )
+        };
+
+        cout << "Boolean::True = " << (bool)Boolean::True << ", Boolean::False = " <<  (bool)Boolean::False << endl;
+    }
+    {
+        cout << "iterating over enum values: ";
+        enum class Numbers { ONE, TWO, THREE, FOUR };
+        for (Numbers n: magic_enum::enum_values<Numbers>()) {
+            cout << magic_enum::enum_name(n) << " ";
+        }
+        cout << endl;
     }
 }
 
