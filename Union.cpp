@@ -68,6 +68,7 @@ int main() {
         U u;
         u.x_short = 1;
         cout << "size of union {short, int} " << EQUALS_STRING(sizeof(U), max(sizeof(short), sizeof(int))) << " max field size" << endl; // ==
+        static_assert(is_aggregate_v<U>);
     }
     {
         // deletes constructors (etc.) from a union with a member that has a constructor
@@ -104,9 +105,18 @@ int main() {
             };
         };
 
+        // aggregate initialization
         A a1{ 'i', 1};
         A a2{ 'f', .f = 1.f}; // does not compile without '.f ='
         cout << "A(" << a1.type_of_union << ") with anon union: i is " << a1.i << ", f is " << a1.f << endl;
         cout << "A(" << a2.type_of_union << ") with anon union: i is " << a2.i << ", f is " << a2.f << endl;
+    }
+    {
+        // aggregate initialization for union
+        union {
+            int i;
+            short j;
+        } u { .j = 2 };
+        assert(2 == u.i);
     }
 }
