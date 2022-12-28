@@ -3,6 +3,8 @@
 #ifndef _MYCXX_UTILS_HPP
 #define _MYCXX_UTILS_HPP
 
+#define COMPILES(...) /**/
+
 #define COMPILATION_ERROR(...) /**/
 
 #define RUNTIME_ERROR(...) /**/

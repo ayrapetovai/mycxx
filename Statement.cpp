@@ -5,9 +5,61 @@
 
 using namespace std;
 
+// `IterableRange` does not have any `begin()` nor `end()` members, yet it is eligible to looped in "rage-for".
+class IterableRange {
+public:
+    int start;
+    int excluding_limit;
+
+    IterableRange(int s, int el): start(s), excluding_limit(el) {}
+    class Iterator: public __wrap_iter<int*> {
+        int next;
+    public:
+        Iterator(int f): next(f) {}
+        int operator*() {
+            return next++;
+        }
+        bool operator!=(const Iterator& other) const {
+            return this->next != other.next;
+        }
+    };
+
+};
+
+IterableRange::Iterator begin(const IterableRange& iterable) {
+    return IterableRange::Iterator{iterable.start };
+}
+
+IterableRange::Iterator end(const IterableRange& iterable) {
+    return IterableRange::Iterator{iterable.excluding_limit };
+}
+
 int main() {
     {
-        // TODO switch
+        // declarations in conditions
+        auto foo = []() { return 3.14; };
+        double r = 2;
+
+        // `pi` lives in `if`'s scope
+        if (double pi{foo()}) {     // also: if (double pi = foo()) {
+            double s = 2 * pi * r;
+            cout << "declaration is condition: s is " << s << endl;
+        }
+
+        COMPILATION_ERROR(
+            cout << pi << endl; // Use of undeclared identifier 'pi'
+        )
+    }
+    {
+        int x = 1;
+        COMPILATION_ERROR(
+            switch(x) {
+                case 0:
+                    int y = 2;
+                case 1: // Cannot jump from switch statement to this case label jump bypasses variable initialization
+                    cout << y;
+            }
+        )
     }
     {
         // jump table, see `$THIS_REPO/res/jump-table/*.s`
@@ -79,7 +131,7 @@ int main() {
                 else if (x == 8) i = 0;
                 else if (x == 9) i = 5;
             }
-            std::cout << i;
+            std::cout << i << endl;
         }
 
         // for if-no-else variant to be compiled with no optimization
@@ -102,23 +154,36 @@ int main() {
                 if (x == 8) i = 0;
                 if (x == 9) i = 5;
             }
-            std::cout << i;
+            std::cout << i << endl;
         }
     }
     {
         // range-for statement
         vector<int> v{ 1, 2 , 3 };
 
-        // TODO make a class with begin() and end()
-
-        cout << "vector:";
+        cout << "iterating vector with vector.begin/end :";
         for (int x: v) { // left to the : must be an expression, for which we can call v.begin() and v.end() or begin(v) and end(v)
             cout << " " << x;
         }
         cout << endl;
 
         // 1. compiler look for methods v.begin() and v.end() in sequence, fields do not count.
-        // 2. compiler look for functions begin(v) and end(v) in the enclosing scope.
+        // 2. compiler look for functions std::begin(v) and std::end(v) in the enclosing scope.
+
+        cout << "iterating vector with std::begin/end :";
+        for (auto x = begin(v); x != end(v); x++) {
+            cout << " " << *x;
+        }
+        cout << endl;
+    }
+    {
+        cout << "iterating IterableRange with functions begin/end :";
+        IterableRange iterable{ 3, 10 };
+        for(int x: iterable) {
+            cout << " " << x;
+        }
+        cout << endl;
+        // prints " 3 4 5 6 7 8 9"
     }
 // goto
     {
@@ -173,6 +238,19 @@ block2_end:;
         }
 outer_for_loop_exit:;
                cout << "Exit outer for loop, iterations were made " << x << endl;
+    }
+    {
+        COMPILATION_ERROR(
+            do {} while(); // Expected expression in ()
+        )
+
+        COMPILATION_ERROR(
+            while() {} // Expected expression in ()
+        )
+
+        COMPILES(
+            for(;;) {} // OK, infinite loop
+        )
     }
 }
 
