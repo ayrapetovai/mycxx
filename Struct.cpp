@@ -4,9 +4,13 @@
 
 using namespace std;
 
-// Every struct must have unique definition in program
+// Every struct must have unique definition in program.
 
-// An array is an aggregate of elements of the same type. In its simplest form, a struct is an aggregate of elements of arbitrary types
+// An array is an aggregate of elements of the same type.
+// In its simplest form, a struct is an aggregate of elements of arbitrary types.
+
+// By default, `struct`'s members are `public`.
+// [!] Members are allocated in memory in declaration order.
 
 // struct declaration, all below structs belong to different types (type name plays the role)
 struct Struct_name1 { // C++-style, declare type
@@ -37,7 +41,7 @@ struct MemberDeclarationOrder {
 
 // struct name is available right after compiler read it, yet we cannot make an object of it
 struct Link {
-    Link *link; // compiler does not need to know size of Link to be shure about pointer size.
+    Link *link; // compiler does not need to know size of Link to be sure about pointer size.
 };
 
 COMPILATION_ERROR(
@@ -84,7 +88,7 @@ int main() {
         );
     }
     {
-        // members of struct located in memory in ther order they was declared
+        // members of struct located in memory in their order they are declared
         MemberDeclarationOrder mdo{ 77, 42, 13 };
         cout << "{ a, b, c } " << "&a " << LESS_STRING((void*)&mdo.a, (void*)&mdo.b) << " &b " <<  LESS_STRING((void*)&mdo.b, (void*)&mdo.c) << " &c" << endl;
         cout << "{char, int, char} align is " << alignof(MemberDeclarationOrder) << endl; // 4, due to int
@@ -93,13 +97,13 @@ int main() {
         // 'c' is one byte of type char what is just gap (cannot use it),
         // 'I' is sizeof(int) bytes that are used
 
-        // gap are filled with 0, but I dont know if it is standardised, automatic variables guarantied to be 0?
+        // gap are filled with 0, but I don't know if it is standardised, automatic variables guarantied to be 0?
         // alignment need to make struct body machine-independent
         int32_t gap1 = *((int32_t*)&mdo.a);
         cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, first gap is " << bitset<sizeof(int32_t)*8>(gap1) << endl;
         int32_t gap2 = *((int32_t*)&mdo.c);
-        cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, econd gap is " << bitset<sizeof(int32_t)*8>(gap2) << endl;
-        // TODO Does big endian, little endian infuence on gap position?
+        cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, second gap is " << bitset<sizeof(int32_t)*8>(gap2) << endl;
+        // TODO Does big endian, little endian influence on gap position?
         cout << ((int64_t)&mdo == (int64_t)&mdo.a) << endl;
         cout << (int64_t)&mdo + alignof(mdo)*1 << " " << (int64_t)&mdo.b << endl;
         cout << (int64_t)&mdo + alignof(mdo)*2 << " " << (int64_t)&mdo.c << endl; 
@@ -109,8 +113,23 @@ int main() {
         int32_t gap1 = *((int32_t*)&mdop->a);
         cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, first gap is " << bitset<sizeof(int32_t)*8>(gap1) << endl;
         int32_t gap2 = *((int32_t*)&mdop->c);
-        cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, econd gap is " << bitset<sizeof(int32_t)*8>(gap2) << endl;
+        cout << "{ char(1), gap(3), int(4), char(1), gap(3) }, second gap is " << bitset<sizeof(int32_t)*8>(gap2) << endl;
         delete mdop;
+    }
+    {
+        // layout depends on the order of members
+        struct {
+           int a;
+           char b;
+           char c;
+        } s;
+
+        long s_address = reinterpret_cast<long>(&s); // offset 0
+        long a_address = reinterpret_cast<long>(&s.a);
+        long b_address = reinterpret_cast<long>(&s.b);
+        long c_address = reinterpret_cast<long>(&s.c);
+        cout << "{int, char, char} offsets: a " << (a_address - s_address) << ", b " << (b_address - s_address) << ", c " << (c_address - s_address)  << endl;
+        // outputs "0" == offset relative to `s` address, "4" == sizeof(int), "5" == sizeof(int) + sizeof(char)
     }
     {
         // define struct in some local scope
@@ -123,8 +142,8 @@ int main() {
     {
         struct Int { int x; };
         Int i1 = { 1 };
-        Int i2 = i1; // ok, TODO is constructor(const T& other) automaticly generated?
-        Int i3 = move(i1); // ok, TODO is constructor(const T&& other) automaticaly generated or falback to constructor(const T& other) is made?
+        Int i2 = i1; // ok, TODO is constructor(const T& other) automatically generated?
+        Int i3 = move(i1); // ok, TODO is constructor(const T&& other) automatically generated or fallback to constructor(const T& other) is made?
 
         COMPILATION_ERROR(
             int x = i2; // No viable conversion from 'Int' to 'int'
@@ -134,15 +153,21 @@ int main() {
         // A POD ("Plain Old Data") is an object that can be manipulated as "just data"
         // without worrying about complications of class layouts or user-defined semantics for construction, copy, and move.
 
-        // A POD must have trivial default constructor (either user-defined or default).
+        // A POD must have "trivial" default constructor (either user-defined or default).
         // A POD must not have virtual methods (otherwise each object has pointer to vtable, if we have an array of Base type - the vtable
-        // pointers of it's elements may be different - different Subtypes, cannot copy byte by byte).
+        //       pointers of its elements may be different - different Subtypes, cannot copy byte by byte).
         // A POD must not have any nonstandard copy/move semantics or destructor, pointer fields.
+
+        // Default constructor is "trivial" if it does not need to do any work (use =default if you need to define one §17.6.1)
 
         struct LikelyPOD { int x; double y; };
         struct LikelyPODSubType: LikelyPOD { char z; };
+        struct PrecisePODSubType: LikelyPOD {};
+        struct PointerInPOD { int* p; };
         cout << "Q: Is { int, double } a POD? A: " << YESNO_STRING(is_pod<LikelyPOD>::value) << endl; // yes
-        cout << "Q: Is { {int, double}, char} a POD? A: " << YESNO_STRING(is_pod<LikelyPODSubType>::value) << endl; // no
+        cout << "Q: Is { { int, double }, char } a POD? A: " << YESNO_STRING(is_pod<LikelyPODSubType>::value) << endl; // no
+        cout << "Q: Is { { int, double } } a POD? A: " << YESNO_STRING(is_pod<PrecisePODSubType>::value) << endl; // yes
+        cout << "Q: Is { int* } a POD? A: " << YESNO_STRING(is_pod<PointerInPOD>::value) << endl; // yes
     }
     {
         // structures with bit-fields, sizeof(short) is 2
