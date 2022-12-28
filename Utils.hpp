@@ -1,5 +1,5 @@
 #include <cxxabi.h> // for demangle's abi::__cxa_demangle
-#include <memory>
+#include <memory>   // for std::unique_ptr
 
 #ifndef _MYCXX_UTILS_HPP
 #define _MYCXX_UTILS_HPP
