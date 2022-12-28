@@ -9,6 +9,10 @@ cd build-xcode
 cmake .. -GXcode
 open mycxx.xcodeproj/
 
+## CLion with cmake
+using CLion to make *cmake* work properly (download libs) set:
+Settings -> Build, Execution, Deployment -> CMake -> Generator to "Unix Makefiles"
+
 ## TODO
 - move project to [build2](https://build2.org)?
 
