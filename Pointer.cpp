@@ -182,4 +182,23 @@ int main() {
             int a = x * 2; // Segmentation fault, x is 0
         );
     }
+    {
+        // Pointers to class fields
+        struct A {
+            int field;
+        };
+
+        A a{ 2 };
+        A* ap = new A{ 1 };
+
+        int *pointer_to_filed_of_A1 = &a.field;
+        int *pointer_to_filed_of_A2 = &ap->field;
+
+        COMPILATION_ERROR(
+                int *pointer_to_filed_of_A1 = a.*field; // Use of undeclared identifier 'field'
+                int *pointer_to_filed_of_A2 = ap->*foo; // Use of undeclared identifier 'field'
+        )
+
+        delete ap;
+    }
 }
