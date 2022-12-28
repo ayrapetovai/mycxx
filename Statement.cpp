@@ -12,7 +12,7 @@ public:
     int excluding_limit;
 
     IterableRange(int s, int el): start(s), excluding_limit(el) {}
-    class Iterator: public __wrap_iter<int*> {
+    class Iterator {
         int next;
     public:
         Iterator(int f): next(f) {}
@@ -22,6 +22,10 @@ public:
         bool operator!=(const Iterator& other) const {
             return this->next != other.next;
         }
+	Iterator& operator++() {
+	    next++;
+	    return *this;
+	}
     };
 
 };

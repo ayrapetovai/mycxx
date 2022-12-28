@@ -1,4 +1,5 @@
 #include<iostream>
+#include<bitset>
 #include<bit>
 #include "Utils.hpp"
 
@@ -109,7 +110,11 @@ int main() {
         auto bits = bitset<sizeof(s) * 8>{*reinterpret_cast<unsigned long*>(&s)};
         if constexpr (endian::native == endian::little) {
             for (size_t i{}; i < bits.size()/2; i++) {
-                swap(bits[i], bits[bits.size() - i - 1]);
+                // Code below does not work in WSL2, errr: ambigous swap function name
+                // std::swap(bits[i], bits[bits.size() - i - 1]);
+                char t = bits[i];
+		bits[i] = bits[bits.size() - i - 1];
+		bits[bits.size() - i - 1] = t;
             }
         }
         cout << "bits of `s` are: [" << bits << "], size=" << bits.size() << endl;
