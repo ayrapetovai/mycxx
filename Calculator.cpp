@@ -40,7 +40,7 @@ int eval(const Expr& expr) {
 }
 int main() {
     // 2 + 3
-    auto expr = Expr{Add{ std::shared_ptr<Expr>{new Expr{2}}, std::shared_ptr<Expr>{new Expr{ 3 }}} };
+    auto expr = Expr{Add{std::make_shared<Expr>(2), std::make_shared<Expr>(3)}};
     auto res = eval(expr);
     std::cout << res << std::endl;
     // prints "5"
