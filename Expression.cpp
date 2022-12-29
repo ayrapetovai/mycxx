@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <array>
 #include "Utils.hpp"
@@ -81,13 +82,45 @@ constexpr int plusTen(int x) {
 
 int main() {
     {
+        // Three-way comparison operator `<=>`: Java compareTo
+        int x = 3;
+        int y = 10;
+        cout << "(3 <=> 10) type is " << describe_type(typeid(x <=> y).name()) << endl;
+        cout << "(3 <=> 10) is less? " << (x <=> y == strong_ordering::less) << endl;
+        // outputs "std::__1::strong_ordering" witch is `std::strong_ordering`
+    }
+    {
+        double a = 32.23;
+        double b = 42.123;
+        cout << "(a <=> b) < 0: " << YESNO_STRING((a <=> b) < 0) << endl;
+
+        auto nan_twc_double = numeric_limits<double>::quiet_NaN() <=> b;
+        cout << "(NaN <=> b) ";
+        if (nan_twc_double < 0) {
+            cout << "< 0";
+        } else if (nan_twc_double > 0) {
+            cout << "> 0";
+        } else if (nan_twc_double == 0) {
+            cout << "== 0";
+        } else {
+            cout << "<> 0";
+        }
+        cout << ", real value is "<< *reinterpret_cast<int*>(&nan_twc_double) << endl;
+        assert(nan_twc_double == partial_ordering::unordered);
+        // prints "(NaN <=> b) <> 0" - unordered
+
+        auto pz_nz_o = -0 <=> +0;
+        assert(pz_nz_o == partial_ordering::equivalent);
+        assert(pz_nz_o != partial_ordering::unordered);
+    }
+    {
         // order of evaluation is undefined
         cout << "x=foo(1) + bar(2) ";
         int x = foo(1) + bar(2);
         cout << endl;
     }
     {
-        // order of evaluaion is undefined: foo(bar()) or wah(baz())
+        // order of evaluation is undefined: foo(bar()) or wah(baz())
         cout << "x=foo(bar(1)) + wah(baz(2)) ";
         int x = foo(bar(1)) + wah(baz(2));
         cout << endl;
