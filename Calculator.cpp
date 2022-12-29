@@ -15,13 +15,6 @@ struct Mul {
 struct Expr : std::variant<int, Neg, Add, Mul> {
     using variant::variant;
 };
-namespace std {
-    template <>
-    struct variant_size<Expr> : variant_size<Expr::variant> {};
-    template <std::size_t I>
-    struct variant_alternative<I, Expr> : variant_alternative<I, Expr::variant> {};
-}
-
 int eval(const Expr& expr) {
     struct visitor {
         int operator()(int i) const {
@@ -45,7 +38,6 @@ int eval(const Expr& expr) {
     };
     return std::visit(visitor{}, expr);
 }
-
 int main() {
     // 2 + 3
     auto expr = Expr{Add{ std::shared_ptr<Expr>{new Expr{2}}, std::shared_ptr<Expr>{new Expr{ 3 }}} };
