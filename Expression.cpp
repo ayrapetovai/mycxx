@@ -4,7 +4,7 @@
 #include "Utils.hpp"
 
 using namespace std;
-// literal-tyep - class/struct with constexpr constructor: empty body, all memnbers can be initialized with constant expressions
+// literal-type - class/struct with constexpr constructor: empty body, all members can be initialized with constant expressions
 int foo(int x) {
     cout << " foo(" << x<< ")";
     return x;
@@ -144,14 +144,18 @@ int main() {
         // A temporary object is destroyed at the end of the full expression in which it was created.
         // A full expression is an expression that is not a subexpression of some other expression.
         // TODO is this example correct? demonstrative?
+        cout << "defined vars for calculation d = a + b + 11 + c" << endl;
         Int2 a{ 3 };
         Int1 b{ 5 };
         Int2 c{ 7 };
+        cout << "begin calculation d = a + b + 11 + c" << endl;
         Int2 d = a + b + 11 + c;
+        cout << "calculation d = a + b + 11 + c is over" << endl;
         // destruction is made in reversed order compare to create order
-        // ~Int2[value = 19]   <-- temporary object  a + b + 3
+        // ~Int2[value = 19]  <-- temporary object  a + b + 11
         // ~Int2[value = 8]   <-- temporary object, a + b
-        // ~Int2[value = 26]  <-- d
+        // calculation d = a + b + 11 + c is over
+        // ~Int2[value = 26]  <-- d, materialized temporary object a + b + 11 + c
         // ~Int2[value = 7]   <-- c
         // ~Int1[value = 5]   <-- b
         // ~Int2[value = 3]   <-- a
@@ -163,7 +167,7 @@ int main() {
         int* pv = (a + b).value; // storage is not guaranteed to exist after that temporary is destroyed.
         // (a + b) object is destroyed after accessing by .value field (out of expression scope)
         // now pv points to deallocated storage
-        cout << "value from remporary object is " << *pv << endl; // 3, however we can see it...
+        cout << "value from temporary object is " << *pv << endl; // 3, however we can see it...
         // a and b are destroyed here
     }
     {
@@ -189,13 +193,13 @@ int main() {
         }
     }
     {
-        // constexpr item can be initialized only with constepsr expression or const item
+        // constexpr item can be initialized only with constexpr expression or const item
         const int x = 1;
         const string s = "asd";
 
         constexpr int cex = x; // OK
 
-        // consexpr can be only 'literal type' (a class with a constexpr constructor e. g. POD)
+        // constexpr can be only 'literal type' (a class with a constexpr constructor e. g. POD)
         COMPILATION_ERROR(
             constexpr string ces = s; // Constexpr variable cannot have non-literal type 'const std::__1::string' 
         );
@@ -224,7 +228,7 @@ int main() {
         pp = The_pod(); // operator= must be const for this to compile
     }
     {
-        // Point is a literal-type, it can be initialized with potentialy constant expressions
+        // Point is a literal-type, it can be initialized with potentially constant expressions
         struct Point { int x; int y; };
         constexpr Point p{ 0, 0};
         constexpr int x = p.x;
