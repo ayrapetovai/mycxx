@@ -16,8 +16,8 @@ public:
         int next;
     public:
         Iterator(int f): next(f) {}
-        int operator*() {
-            return next++;
+        int operator*() const {
+            return next;
         }
         bool operator!=(const Iterator& other) const {
             return this->next != other.next;
@@ -39,6 +39,20 @@ IterableRange::Iterator end(const IterableRange& iterable) {
 }
 
 int main() {
+    {
+        // limiting the scope of variable to `if` statement
+        if (int x = 3; x != 2) {
+            cout << "if (init_definition; condition_expr) {}" << endl;
+        }
+        COMPILATION_ERROR(
+            x; // Use of undeclared identifier 'x'
+        )
+
+        // useful with locks
+        mutex mtx;
+        volatile int some_shared_var = 2;
+        if(std::lock_guard _(mtx); some_shared_var == 2) {}
+    }
     {
         // declarations in conditions
         auto foo = []() { return 3.14; };
