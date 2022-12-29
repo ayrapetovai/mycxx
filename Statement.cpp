@@ -54,6 +54,46 @@ int main() {
         if(std::lock_guard _(mtx); some_shared_var == 2) {}
     }
     {
+        auto get_x = []()-> bool { return random() % 2; };
+        switch (int x = get_x(); x) {
+            case true: cout << "switch with init prints for true" << endl; break;
+            case false: cout << "switch with init prints for false" << endl; break;
+            default:
+                // never be here
+                ;
+        }
+    }
+    {
+        // ranged-for with initializing
+        auto get_values = []() {
+            cout << " <<call get_values()>> ";
+            return array<int, 3>{ 1, 2, 3};
+        };
+
+        // `get_values()` called once
+        cout << "values from `ranger-for` without initialization: ";
+        for (auto const& v : get_values()) {
+            std::cout << v << ' ';
+        }
+        cout << endl;
+
+        // `get_values()` called once
+        cout << "values from `ranged-for` with initialization: ";
+        for (auto const& values = get_values(); auto const& v : values) {
+            std::cout << v << ' ';
+        }
+        cout << endl;
+
+        cout << "indexed values from `ranged-for` with initialization: ";
+        // `get_values()` called once
+        // TODO is there an unnecessary copying of `array<int, 3>`?
+        for (auto [i, values] = pair{ 0, get_values() }; auto const& v : values) {
+            std::cout << "v[" << i++ << "]=" << v << (i < values.size()? ", ": "");
+        }
+        cout << endl;
+        // prints exactly "v[0]=1, v[1]=2, v[2]=3", with no trailing ", ".
+    }
+    {
         // declarations in conditions
         auto foo = []() { return 3.14; };
         double r = 2;
