@@ -1,8 +1,11 @@
 #include <cxxabi.h> // for demangle's abi::__cxa_demangle
 #include <memory>   // for std::unique_ptr
+//#include <source_location>
 
 #ifndef _MYCXX_UTILS_HPP
 #define _MYCXX_UTILS_HPP
+
+#define UNDEFINED_BEHAVIOR(...) /**/
 
 #define COMPILES(...) /**/
 
@@ -22,5 +25,13 @@ std::string describe_type(const char* mangled) {
             abi::__cxa_demangle(mangled, nullptr, nullptr, &status), std::free);
     return result ? std::string(result.get()) : "error occurred";
 }
+
+//template <typename T>
+//void dynamic_assert(T b, const std::source_location& pLocation) noexcept {
+//    if (!static_cast<bool>(b))
+//    {
+//        throw std::logic_error("assertion failed");
+//    }
+//}
 
 #endif // _MYCXX_UTILS_HPP
