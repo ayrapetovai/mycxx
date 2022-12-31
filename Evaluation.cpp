@@ -25,7 +25,7 @@ constexpr int isqrt(int x) {
     return isqrt_helper(1,3,x)/2 - 1;
 }
 
-// Operator Precedence
+// TODO Operator Precedence
 int main() {
     {
         cout << "Order of calls foo and bar `x = foo() + bar()`: ";
@@ -155,5 +155,54 @@ int main() {
         if (px) {
             // OK, and not bad?
         }
+    }
+    {
+        // conditional expression
+        // c ? a: b;
+        // ok, if decltype(a) == decltype(b) and cant be implicitly converted to decltype(c)
+        int x = 1;
+        char y = 2;
+        bool b = false;
+        char c1 = b? x: y; // implicit narrowing
+
+        COMPILATION_ERROR(
+            // Non-constant-expression cannot be narrowed from type 'int' to 'char' in initializer list
+            char c2 { b? x: y }; // `{}` initializer forbids implicit narrowing
+        )
+        int c2 { b? x: y }; // no implicit narrowing
+    }
+    {
+        // Increment and Decrement
+        int x = 0, xx = 0, y, yy, t;
+
+        y = ++x;
+        // equivalent to
+        yy = (xx = xx + 1);
+
+        cout << "x=" << x << "; y = ++x; y==" << y << "; x==" << x << endl;
+        cout << "x=" << xx << "; y = (x = x + 1); y==" << yy << "; x==" << xx << endl;
+
+        x = 0;
+        xx = 0;
+        y = x++;
+        // equivalent to
+        yy = (t = xx, xx = xx + 1, t);
+
+        cout << "x=" << x << "; y = x++; y==" << y << "; x==" << x << endl;
+        cout << "x=" << xx << "; y = (t = xx, xx = xx + 1, t); y==" << yy << "; x==" << xx << endl;
+    }
+    {
+        // `a?:b` is `a? a: b`, where `a` is evaluated one time
+        string s = "123"?:"abc";
+        int x = 17?:23;
+
+        int *p = nullptr;
+        RUNTIME_ERROR(
+            auto pi = *p?:213; // interrupted by signal 11: SIGSEGV
+        )
+
+        const auto pi = p ?: &x;
+        cout << s << " " << x << " " << *pi << endl;
+        // prints "123 17 17"
     }
 }
