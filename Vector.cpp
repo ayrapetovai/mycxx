@@ -16,7 +16,7 @@ ostream& operator<< (ostream& out, const vector<T>& v) {
     return out;
 }
 
-// TODO describe difference betwin vector<bool> and vector<T>, where T != bool
+// TODO describe difference between vector<bool> and vector<T>, where T != bool
 
 int main() {
     vector<int> v = { 1, 2, 3 };
