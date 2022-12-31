@@ -58,6 +58,17 @@ int main() {
         cout << endl;
     }
     {
+        int a[] = { [10] = 1, [2] = 3 }; // { 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1 }
+        int b[] = { [0 ... 10] = 1, [12 ... 15] = 7 }; // { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 7, 7, 7 }
+
+        cout << "{ [10] = 1, [2] = 3 } is ";
+        std::copy(a, a + sizeof(a)/sizeof(a[0]), std::ostream_iterator<int>(std::cout, " "));
+        cout << endl;
+        cout << "{[0 ... 10] = 1, [12 ... 15] = 7} is ";
+        std::copy(b, b + sizeof(b)/sizeof(b[0]), std::ostream_iterator<int>(std::cout, " "));
+        cout << endl;
+    }
+    {
         int a[1];
         int b[1];
         COMPILATION_ERROR(
